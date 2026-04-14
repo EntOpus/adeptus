@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adeptus.fullname" . }}
+  labels:
+    {{- include "adeptus.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "adeptus.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.containerPort | quote }}
+        prometheus.io/path: "/metrics"
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "adeptus.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "adeptus.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: ADEPTUS__DATABASE__URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-secrets
+                  key: database-url
+            - name: ADEPTUS__NATS__URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: nats-url
+            - name: ADEPTUS__KETO__READ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: keto-read-url
+            - name: ADEPTUS__OBSERVABILITY__TRACING__OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: otlp-endpoint
+            {{- if .Values.config.pactumGraphqlUrl }}
+            - name: ADEPTUS__PACTUM__GRAPHQL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: pactum-graphql-url
+            {{- end }}
+            {{- if .Values.config.cdn.enabled }}
+            - name: ADEPTUS__CDN__ENABLED
+              value: "true"
+            - name: ADEPTUS__CDN__BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: cdn-base-url
+            - name: ADEPTUS__CDN__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-secrets
+                  key: cdn-api-key
+            - name: ADEPTUS__CDN__BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "adeptus.fullname" . }}-config
+                  key: cdn-bucket-name
+            {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.persistence.enabled }}
+            - name: uploads
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.persistence.enabled }}
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: {{ include "adeptus.fullname" . }}-uploads
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 30

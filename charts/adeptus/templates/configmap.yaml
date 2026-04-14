@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "adeptus.fullname" . }}-config
+  labels:
+    {{- include "adeptus.labels" . | nindent 4 }}
+data:
+  nats-url: {{ .Values.config.natsUrl | quote }}
+  keto-read-url: {{ .Values.config.ketoReadUrl | quote }}
+  otlp-endpoint: {{ .Values.config.otlpEndpoint | quote }}
+  {{- if .Values.config.pactumGraphqlUrl }}
+  pactum-graphql-url: {{ .Values.config.pactumGraphqlUrl | quote }}
+  {{- end }}
+  {{- if .Values.config.cdn.enabled }}
+  cdn-base-url: {{ .Values.config.cdn.baseUrl | quote }}
+  cdn-bucket-name: {{ .Values.config.cdn.bucketName | quote }}
+  {{- end }}

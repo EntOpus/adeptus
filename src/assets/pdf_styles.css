@@ -1,0 +1,456 @@
+/* PDF Styles for Document Generation */
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #333;
+    background: white;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    page-break-after: avoid;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 24pt;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.3em;
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 20pt;
+    border-bottom: 1px solid #bdc3c7;
+    padding-bottom: 0.2em;
+}
+
+h3 {
+    font-size: 16pt;
+}
+
+h4 {
+    font-size: 14pt;
+}
+
+h5 {
+    font-size: 13pt;
+}
+
+h6 {
+    font-size: 12pt;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 1em;
+    text-align: justify;
+}
+
+/* Links */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+li {
+    margin-bottom: 0.3em;
+}
+
+ul li {
+    list-style-type: disc;
+}
+
+ol li {
+    list-style-type: decimal;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.3em 0;
+}
+
+/* Code */
+code {
+    font-family: 'Courier New', 'Monaco', monospace;
+    background-color: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 11pt;
+    border: 1px solid #e9ecef;
+}
+
+pre {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 1em;
+    margin: 1em 0;
+    overflow-x: auto;
+    page-break-inside: avoid;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    font-size: 10pt;
+    line-height: 1.4;
+}
+
+/* Blockquotes */
+blockquote {
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border-left: 4px solid #3498db;
+    background-color: #f8f9fa;
+    font-style: italic;
+    page-break-inside: avoid;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    page-break-inside: avoid;
+}
+
+th, td {
+    border: 1px solid #bdc3c7;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background-color: #ecf0f1;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+    page-break-inside: avoid;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 2px solid #bdc3c7;
+    margin: 2em 0;
+    page-break-after: avoid;
+}
+
+/* Text formatting */
+strong, b {
+    font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}
+
+u {
+    text-decoration: underline;
+}
+
+mark {
+    background-color: #fff3cd;
+    padding: 1px 2px;
+}
+
+del, s {
+    text-decoration: line-through;
+}
+
+/* Page breaks */
+.page-break-before {
+    page-break-before: always;
+}
+
+.page-break-after {
+    page-break-after: always;
+}
+
+.page-break-inside-avoid {
+    page-break-inside: avoid;
+}
+
+/* Version warning styles (for PDF with JS) */
+#version-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    z-index: 9999;
+    font-size: 11pt;
+    font-weight: bold;
+    border-bottom: 2px solid #c0392b;
+}
+
+#version-warning a {
+    color: white;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+/* Print-specific styles */
+@media print {
+    body {
+        font-size: 11pt;
+        line-height: 1.5;
+    }
+
+    h1 {
+        font-size: 22pt;
+    }
+
+    h2 {
+        font-size: 18pt;
+    }
+
+    h3 {
+        font-size: 15pt;
+    }
+
+    h4 {
+        font-size: 13pt;
+    }
+
+    h5, h6 {
+        font-size: 11pt;
+    }
+
+    /* Avoid page breaks after headings */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+
+    /* Avoid page breaks inside these elements */
+    blockquote, pre, table, figure {
+        page-break-inside: avoid;
+    }
+
+    /* Avoid widow/orphan lines */
+    p {
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* Hide version warning in print */
+    #version-warning {
+        display: none;
+    }
+}
+
+/* Glossary-specific styles */
+.glossary-term {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.glossary-definition {
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
+
+.glossary-category {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-size: 16pt;
+    font-weight: bold;
+    color: #3498db;
+    border-bottom: 1px solid #3498db;
+    padding-bottom: 0.2em;
+}
+
+/* Document metadata */
+.document-meta {
+    margin-bottom: 2em;
+    padding: 1em;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    page-break-inside: avoid;
+}
+
+.document-meta h3 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.document-meta .meta-item {
+    margin-bottom: 0.5em;
+}
+
+.document-meta .meta-label {
+    font-weight: bold;
+    display: inline-block;
+    min-width: 100px;
+}
+
+/* Table of contents */
+.toc {
+    margin: 2em 0;
+    page-break-after: always;
+}
+
+.toc h2 {
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.3em;
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin-bottom: 0.3em;
+}
+
+.toc a {
+    text-decoration: none;
+    color: #2c3e50;
+}
+
+.toc a:hover {
+    color: #3498db;
+}
+
+.toc-level-1 {
+    font-weight: bold;
+    margin-top: 0.8em;
+}
+
+.toc-level-2 {
+    padding-left: 1em;
+}
+
+.toc-level-3 {
+    padding-left: 2em;
+    font-size: 11pt;
+}
+
+/* Footnotes */
+.footnote {
+    font-size: 10pt;
+    color: #6c757d;
+}
+
+.footnotes {
+    margin-top: 3em;
+    border-top: 1px solid #bdc3c7;
+    padding-top: 1em;
+    font-size: 10pt;
+}
+
+.footnotes h3 {
+    font-size: 12pt;
+    margin-bottom: 1em;
+}
+
+/* Header and footer placeholders */
+.header {
+    display: none;
+}
+
+.footer {
+    display: none;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.small {
+    font-size: 10pt;
+}
+
+.large {
+    font-size: 14pt;
+}
+
+.highlight {
+    background-color: #fff3cd;
+    padding: 2px 4px;
+}
+
+.warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-left: 4px solid #fdcb6e;
+    padding: 1em;
+    margin: 1em 0;
+}
+
+.info {
+    background-color: #d1ecf1;
+    border: 1px solid #b8daff;
+    border-left: 4px solid #17a2b8;
+    padding: 1em;
+    margin: 1em 0;
+}
+
+.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-left: 4px solid #28a745;
+    padding: 1em;
+    margin: 1em 0;
+}
+
+.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-left: 4px solid #dc3545;
+    padding: 1em;
+    margin: 1em 0;
+}

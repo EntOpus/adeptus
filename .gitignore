@@ -1,0 +1,17 @@
+# Build
+/target/
+
+# Config overrides
+config/local.toml
+.env
+
+# File uploads
+/uploads/
+
+# SQLx offline query cache (regenerated)
+.sqlx/
+
+# Editor
+*.swp
+*.swo
+*~

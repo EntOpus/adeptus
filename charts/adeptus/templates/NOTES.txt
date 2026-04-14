@@ -1,0 +1,27 @@
+Adeptus has been deployed.
+
+{{- if .Values.ingress.enabled }}
+Access the service at:
+{{- range .Values.ingress.hosts }}
+  https://{{ .host }}
+{{- end }}
+{{- else }}
+To access the service, run:
+  kubectl port-forward svc/{{ include "adeptus.fullname" . }} {{ .Values.service.port }}:{{ .Values.containerPort }}
+  curl http://localhost:{{ .Values.service.port }}/health
+{{- end }}
+
+API server endpoints:
+  /live    - Liveness (always 200)
+  /ready   - Readiness (200 if database is up)
+  /health  - JSON health report
+  /metrics - Prometheus metrics
+  /graphql - GraphQL API + playground
+  /api/files/upload          - Multipart file upload (POST)
+  /api/files/:id/download    - File download (GET)
+  /api/documents/:id/pdf     - PDF generation (GET)
+  /api/documents/:id/version - Document version info (GET)
+
+Note: PDF generation requires wkhtmltopdf. The scratch-based container
+image does not include wkhtmltopdf. For PDF support, use an Alpine-based
+runtime image with wkhtmltopdf installed, or run behind a sidecar.
